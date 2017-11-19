@@ -19,6 +19,13 @@ function getRangeRandom(low, high) {
   return Math.ceil(Math.random() * (high - low) + low);
 }
 
+/*
+ *获取0~30之间任意的一个正负值
+ */
+function get30DegRandom() {
+	return (Math.random() > 0.5 ? '' : '-') + (Math.ceil(Math.random() * 30))
+}
+
 class Gallery extends Component {
 	constructor(){
 		super();
@@ -41,7 +48,17 @@ class Gallery extends Component {
 			}
 		}
 		this.state = {
-			imgArrangeArr : []
+			imgArrangeArr : [
+				/* {
+				 	pos : {
+				 		left : '0',
+				 		right : '0'
+				 	},
+				 	rotate : '0', //图片旋转角度
+				  	isInverse : false, //图片正反面
+				  	isCenter: false
+				}*/ 
+			]
 		}
 	}
 	//组件加载进来之后计算每张图片的位置范围
@@ -90,7 +107,10 @@ class Gallery extends Component {
 					pos : {
 						left : '20px',
 						top  : '10px'
-					}
+					},
+					rotate : 0,
+					isInverse : false,
+					isCenter: true
 				};
 				this.setState({imgArrangeArr : temp_arr})
 
@@ -108,6 +128,28 @@ class Gallery extends Component {
 			
 		}
 	}
+	/*
+	*翻转图片
+	*@param index 正在被执行inverse操作的那张图片在imgArrangeArr中所对应的索引
+	*/
+	inverse(index){
+		return function(){
+			var imgArrangeArr = this.state.imgArrangeArr;
+			imgArrangeArr[index].isInverse = !imgArrangeArr[index].isInverse;
+			this.setState({imgArrangeArr:imgArrangeArr});
+		}.bind(this);
+	}
+
+	/*
+	* 居中对应index图片
+	*@param index 需要被居中的图片的
+	*/
+	center(index){
+		return function(){
+			this.reArrange(index);
+		}.bind(this);
+	}
+
 	/*
 	*重新布局所有图片
 	*@param centerIndex 指定哪张图片居中
@@ -138,16 +180,23 @@ class Gallery extends Component {
 	        //布局上侧图片
 	        imgsArrangeTopArr.forEach(function (value, index) {
 	    		imgsArrangeTopArr[index] = {
-		    		pos :{
+		    		pos : {
 						top: getRangeRandom(vPosRangeTopY[0], vPosRangeTopY[1]),
 						left: getRangeRandom(vPosRangeX[0], vPosRangeX[1])
 		    		},
+		    		rotate : get30DegRandom(),
+					isInverse: imgArrangeArr[index].isInverse,
+					isCenter: false
+
 	    		}
 	        });
 
-		    //布局中心图片
+		    //布局中心图片(中心图片不旋转)
 		    imgsArrangeCenterArr[0] = {
-				pos: centerPos
+				pos: centerPos,
+				rotate : 0,
+				isInverse: imgsArrangeCenterArr[0].isInverse,
+				isCenter: true
 		    }
 
 		    //布局左右两侧的图片
@@ -161,11 +210,14 @@ class Gallery extends Component {
 				else {
 					hPosRangeLORX = hPosRangeRightSecX;
 				}
-				imgArrangeArr[i] ={
+				imgArrangeArr[i] = {
 					pos : {
 						top: getRangeRandom(hPosRange.y[0], hPosRange.y[1]),
 						left: getRangeRandom(hPosRangeLORX[0], hPosRangeLORX[1])
-					}
+					},
+					rotate : get30DegRandom(),
+					isInverse: imgArrangeArr[i].isInverse,
+					isCenter: false
 				};
 		    }
 
@@ -184,22 +236,25 @@ class Gallery extends Component {
 	render(){
 		/* 以数组形式生成多个子组件 */
 		let imgFigures = imgDatas.map(function(value,index){
+		console.log(this.state.imgArrangeArr[index].pos)
 			return <ImgFigure 
 					data = {value}
 					key = {value.key}
 					ref = {'imgFigure' + index}
-					inlineStyle = {this.state.imgArrangeArr[index].pos} />
+					arrange = {this.state.imgArrangeArr[index]} 
+					inverse = {this.inverse(index)}
+					center = {this.center(index)}/>
 		}.bind(this))
 		return(
-			<section className="stage" ref = "stage">
-				<section className="img-sec">
-					 {imgFigures}
+				<section className="stage" ref = "stage">
+					<section className="img-sec">
+						 {imgFigures}
+					</section>
+					<nav className="controller_nav">
+						
+					</nav>
 				</section>
-				<nav className="controller_nav">
-					
-				</nav>
-			</section>
-		)
-	}
+			)
+		}
 }
 export default Gallery;
