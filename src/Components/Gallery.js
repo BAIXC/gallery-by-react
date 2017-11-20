@@ -1,6 +1,7 @@
 import React , {Component} from 'react';
 
 import ImgFigure from './ImgFigure';
+import ControllerUnit from './ControllerUnit';
 
 
 /* 将图片数据中的fileName转化成图片路径 */
@@ -235,8 +236,8 @@ class Gallery extends Component {
 
 	render(){
 		/* 以数组形式生成多个子组件 */
+		//生成图片组件（数组形式）
 		let imgFigures = imgDatas.map(function(value,index){
-		console.log(this.state.imgArrangeArr[index].pos)
 			return <ImgFigure 
 					data = {value}
 					key = {value.key}
@@ -245,13 +246,18 @@ class Gallery extends Component {
 					inverse = {this.inverse(index)}
 					center = {this.center(index)}/>
 		}.bind(this))
+
+		//生成控制组件（数组形式）
+		let ControllerUnits = imgDatas.map(function(value,index){
+			return <ControllerUnit/>
+		}.bind(this))
 		return(
 				<section className="stage" ref = "stage">
 					<section className="img-sec">
 						 {imgFigures}
 					</section>
 					<nav className="controller_nav">
-						
+						{ControllerUnits}
 					</nav>
 				</section>
 			)
