@@ -249,14 +249,19 @@ class Gallery extends Component {
 
 		//生成控制组件（数组形式）
 		let ControllerUnits = imgDatas.map(function(value,index){
-			return <ControllerUnit/>
+			return <ControllerUnit
+					key = {index}
+					arrange = {this.state.imgArrangeArr[index]} 
+					inverse = {this.inverse(index)}
+					center = {this.center(index)}
+					/>
 		}.bind(this))
 		return(
 				<section className="stage" ref = "stage">
 					<section className="img-sec">
 						 {imgFigures}
 					</section>
-					<nav className="controller_nav">
+					<nav className="controller-nav">
 						{ControllerUnits}
 					</nav>
 				</section>
