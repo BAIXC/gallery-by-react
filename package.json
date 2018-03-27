@@ -1,5 +1,6 @@
 {
   "name": "gallery",
+  "homepage" : "http://baixc.github.io/galley-by-react",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

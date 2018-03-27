@@ -8,7 +8,7 @@ import ControllerUnit from './ControllerUnit';
 let imgDatas_arr = require('../data/imageData.json')
 
 let imgDatas = imgDatas_arr.map(function(singleImgData,index){
-	singleImgData.imgUrl = require('../img/'+singleImgData.fileName);
+	singleImgData.imgUrl = require('../img/' + singleImgData.fileName);
 	singleImgData.key = index;
 	return singleImgData;
 })
@@ -59,7 +59,8 @@ class Gallery extends Component {
 				  	isInverse : false, //图片正反面
 				  	isCenter: false
 				}*/ 
-			]
+			],
+			initImgIndex : 13
 		}
 	}
 	//组件加载进来之后计算每张图片的位置范围
@@ -96,7 +97,7 @@ class Gallery extends Component {
         this.Range.vPosRange.x[0] = halfStageW - imgW;
         this.Range.vPosRange.x[1] = halfStageW;
         
-		this.reArrange(0);
+		this.reArrange(this.state.initImgIndex);
 	}
 
 	//组件加载进来之前检查state是否存在，不存在就初始化state
@@ -114,23 +115,13 @@ class Gallery extends Component {
 					isCenter: true
 				};
 				this.setState({imgArrangeArr : temp_arr})
-
-				/*下面这种方法新版react中不推荐使用,但不会报错，只有Warning
-				if(!this.state.imgArrangeArr[i]){
-					this.state.imgArrangeArr[i] = {
-						pos : {
-							left : '20px',
-							top  : 0
-						}
-					}
-				}
-				*/
 			}
 			
 		}
 	}
 	/*
 	*翻转图片
+	*此处使用闭包保存index
 	*@param index 正在被执行inverse操作的那张图片在imgArrangeArr中所对应的索引
 	*/
 	inverse(index){
@@ -245,7 +236,7 @@ class Gallery extends Component {
 					arrange = {this.state.imgArrangeArr[index]} 
 					inverse = {this.inverse(index)}
 					center = {this.center(index)}/>
-		}.bind(this))
+		}.bind(this));
 
 		//生成控制组件（数组形式）
 		let ControllerUnits = imgDatas.map(function(value,index){
